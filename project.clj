@@ -5,6 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [enlive "1.1.6"]
+                 [clj-http "2.3.0"]
                  [yada "1.2.1"]]
   :main ^:skip-aot mickopedia.core
   :target-path "target/%s"
