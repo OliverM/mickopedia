@@ -39,12 +39,12 @@
   the hokey! ",", would ye believe it? ",", would ye swally that? ",", the
   shitehawk. ",", that's fierce now what? "])
 
-(defn random-phrase
+(defn random-collection-choice
   "Return a random phrase from the phrases list, or a default '.', since we don't want to *always* replace a period. There's a one in three chance the period will be returned."
-  []
-  (let [phrase-count (count phrases)
+  [collection default]
+  (let [phrase-count (count collection)
         total (+ phrase-count (quot phrase-count 2))]
-    (nth phrases (rand-int total) ".")))
+    (nth collection (rand-int total) default)))
 
 (def aReps
   "Replacements for 'a'"
@@ -57,13 +57,22 @@
 (defn mickify-text-node
   "Mickify a given string."
   [content]
-   (s/replace content "." (random-phrase)))
+  (-> content
+      (s/replace #"\bsl\B" "shl")
+      (s/replace #"\Bing\b" "in'")
+      (s/replace "Wikipedia" "Mickopedia")
+      (s/replace " a " (random-collection-choice aReps " a "))
+      (s/replace " the " (random-collection-choice theReps " the "))
+      (s/replace "." (random-collection-choice phrases "."))))
 
 (def mickification
   "The mickopedia transformations."
   (html/transformation
    [:head] (html/prepend (html/html [:base {:href "http://en.wikipedia.org"}]))
    [:div (html/but :a) (html/but :script) :> html/text-node] mickify-text-node
+   [:form#searchform] (html/set-attr :action "http://mickopedia.org/mickify?topic=")
+   [:input#searchInput] (html/set-attr :placeholder "Search Mickopedia")
+   [:div#p-logo :a.mw-wiki-logo] (html/set-attr :href "http://mickopedia.org")
    ))
 
 (defn transform
@@ -73,7 +82,10 @@
   (-> nodes
       mickification
       html/emit*
-      (->> (apply str))))
+      (->> (apply str))
+      (s/replace "upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png"
+                 "mickopedia.org/smallmiki.png") ;; TODO: replace with enlive transform
+      ))
 
 (defn parse-wikipedia-page
   "Given a populated wikipedia search url, return a collection of enlive nodes
