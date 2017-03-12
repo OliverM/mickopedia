@@ -1,19 +1,46 @@
 (ns mickopedia.core
-  (:require [net.cgrand.enlive-html :as html]
-            [yada.yada :refer [listener resource as-resource]])
+  (:require
+   [yada.yada :refer [listener resource as-resource] :as yada]
+   [yada.resources.classpath-resource :refer [new-classpath-resource]]
+   [mickopedia.mickify :refer [mickify]])
   (:gen-class))
 
-(def ^:dynamic *base-url* "https://wikipedia.org")
+(def searcher
+  (resource
+   {:id :mickopedia/mickify
+    :description "Pass search terms to mickify wikipedia mangler."
+    :methods {:get {:consumes [{:media-type #{"application/x-www-form-urlencoded"}
+                                 :charset "UTF-8"}]
+                    :produces #{"text/html"}
+                    :parameters {:query {:topic String}}
+                    :response (fn [ctx]
+                                (let [{:keys [topic]}
+                                      (get-in ctx [:parameters :query])]
+                                  (mickify topic)))}}}))
 
-(defn fetch-url [url]
-  (html/html-resource (java.net.URL. url)))
+(def handler
+  "A BIDI map of URLs to resources."
+  [""
+   [["/mickify" searcher]
+    ["" (new-classpath-resource "public" {:index-files ["index.html"]})]]])
 
-(def svr
-  (listener
-   ["/index.html" (as-resource (clojure.java.io/resource "public/index.html"))]
-   {:port 3000}))
+(def server-atom (atom nil))
+
+(defn start-server
+  [routes port]
+  (reset! server-atom (listener handler {:port port})))
+
+(defn stop-server [server-map]
+  ((:close server-map)))
+
+(defn reset-server []
+  (when @server-atom (stop-server @server-atom))
+  (start-server handler 3000))
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Launch the web-server. Never returns."
   [& args]
-  (println "Hello, World!"))
+  (println "Starting server on port 3000")
+  (start-server handler 3000)
+  @(promise))  ;; all system activity happens on daemon threads
+               ;; so need to block forever here to prevent JVM shutdown
