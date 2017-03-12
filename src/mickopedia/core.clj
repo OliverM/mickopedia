@@ -1,5 +1,6 @@
 (ns mickopedia.core
   (:require
+   [bidi.bidi :refer [url-encode]]
    [yada.yada :refer [listener resource as-resource] :as yada]
    [yada.resources.classpath-resource :refer [new-classpath-resource]]
    [mickopedia.mickify :refer [mickify]])
@@ -16,7 +17,9 @@
                     :response (fn [ctx]
                                 (let [{:keys [topic]}
                                       (get-in ctx [:parameters :query])]
-                                  (mickify topic)))}}}))
+                                  (if (not= topic "")
+                                    (mickify (url-encode topic))
+                                    (mickify (url-encode "St Patrick")))))}}}))
 
 (def handler
   "A BIDI map of URLs to resources."
