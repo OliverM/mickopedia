@@ -10,6 +10,7 @@
   transformations and return a reconstituted html page."
   [nodes]
   (-> nodes
+      (html/transform [:head] (html/prepend (html/html [:base {:href "http://en.wikipedia.org"}])))
       html/emit*
       (->> (apply str))))
 
@@ -23,8 +24,9 @@
                 {"User-Agent"
                  "Mickifier/0.2 mickopedia.org mickopedia@gmail.com"}})
    :body
-   html/html-snippet
-   transform))
+   html/html-snippet))
 
 (defn mickify [in]
-  (parse-wikipedia-page (str *wikipedia-search-url* in)))
+  (-> (str *wikipedia-search-url* in)
+      parse-wikipedia-page
+      transform))
