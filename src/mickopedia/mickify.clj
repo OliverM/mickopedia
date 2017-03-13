@@ -61,7 +61,7 @@
       (s/replace #"\bmother\b" "mammy")
       (s/replace #"\bmothers\b" "mammies")
       (s/replace #"\bhim\b" "yer man")
-      (s/replace #"\b[vV]agina\b" "gee")
+      (s/replace #"\bvagina\b" "gee")
       (s/replace #"\bVagina\b" "Gee")
       (s/replace #"\bpenis\b" "mickey")
       (s/replace #"\bPenis\b" "Mickey")
