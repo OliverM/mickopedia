@@ -40,7 +40,9 @@
   shitehawk. ",", that's fierce now what? "])
 
 (defn random-collection-choice
-  "Return a random phrase from the phrases list, or a default '.', since we don't want to *always* replace a period. There's a one in three chance the period will be returned."
+  "Return a random phrase from the phrases list, or a default '.', since we
+  don't want to *always* replace a period. There's a one in three chance the
+  period will be returned."
   [collection default]
   (let [phrase-count (count collection)
         total (+ phrase-count (quot phrase-count 2))]
@@ -65,15 +67,30 @@
       (s/replace " the " (random-collection-choice theReps " the "))
       (s/replace "." (random-collection-choice phrases "."))))
 
+(defn mickify-alink-node
+  "Given an enlive node of an <a> element with a href attribute pointing back to
+  Wikipedia, return an enlive equivalent with the href pointing at mickopedia"
+  [{:keys [content tag attrs] :as node}]
+  (let [href (:href attrs)]
+    (if (and href (s/starts-with? href "/wiki/"))
+      {:content content
+       :tag tag
+       :attrs (assoc attrs :href
+                     (s/replace-first href "/wiki/"
+                                      "http://mickopedia.org/mickify?topic="))}
+      node)))
+
 (def mickification
   "The mickopedia transformations."
   (html/transformation
    [:head] (html/prepend (html/html [:base {:href "http://en.wikipedia.org"}]))
-   [:div (html/but :a) (html/but :script) :> html/text-node] mickify-text-node
+   [:div html/text-node] mickify-text-node
+   [:a] mickify-alink-node
    [:form#searchform] (html/set-attr :action "http://mickopedia.org/mickify?topic=")
    [:input#searchInput] (html/set-attr :placeholder "Search Mickopedia")
-   [:div#p-logo :a.mw-wiki-logo] (html/set-attr :href "http://mickopedia.org")
-   ))
+   [:div#p-logo :a.mw-wiki-logo] (html/set-attr
+                                  :href "http://mickopedia.org"
+                                  :style "background-image: url(http://mickopedia.org/smallmiki.png)")))
 
 (defn transform
   "Given a collection of enlive nodes of a wikipedia page, apply the mickopedia
@@ -83,8 +100,6 @@
       mickification
       html/emit*
       (->> (apply str))
-      (s/replace "upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png"
-                 "mickopedia.org/smallmiki.png") ;; TODO: replace with enlive transform
       ))
 
 (defn parse-wikipedia-page
