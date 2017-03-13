@@ -9,15 +9,17 @@
   (:gen-class))
 
 (def topic-schema
-  {(schema/required-key :topic) String})
+  {(schema/required-key :topic) String
+   (schema/optional-key :searchToken) String})
 
 (def searcher
   (resource
    {:id :mickopedia/mickify
     :description "Pass search terms to mickify wikipedia mangler."
     :methods {:get {:consumes [{:media-type #{"application/x-www-form-urlencoded"}
-                                 :charset "UTF-8"}]
-                    :produces #{"text/html"}
+                                :charset "UTF-8"}]
+                    :produces {:media-type "text/html"
+                               :charset "UTF-8"}
                     :parameters {:query topic-schema}
                     :response (fn [ctx]
                                 (let [{:keys [topic]}
