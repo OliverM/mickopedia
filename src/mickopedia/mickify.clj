@@ -80,8 +80,10 @@
    [:head] (html/prepend (html/html [:base {:href "http://en.wikipedia.org"}]))
    [:div html/text-node] mickify-text-node
    [:a] mickify-alink-node
-   [:form#searchform] (html/set-attr :action "http://mickopedia.org/mickify?topic=")
-   [:input#searchInput] (html/set-attr :placeholder "Search Mickopedia")
+   [:form#searchform] (html/set-attr :action "http://mickopedia.org/mickify")
+   [:div#simpleSearch :> :input] (html/remove-attr :name)
+   [:input#searchInput] (html/set-attr :placeholder "Search Mickopedia"
+                                       :name "topic")
    [:div#p-logo :a.mw-wiki-logo] (html/set-attr
                                   :href "http://mickopedia.org"
                                   :style "background-image: url(http://mickopedia.org/smallmiki.png)")))

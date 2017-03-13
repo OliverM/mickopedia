@@ -1,10 +1,15 @@
 (ns mickopedia.core
   (:require
+   [schema.core :as schema]
    [bidi.bidi :refer [url-encode]]
    [yada.yada :refer [listener resource as-resource] :as yada]
    [yada.resources.classpath-resource :refer [new-classpath-resource]]
-   [mickopedia.mickify :refer [mickify]])
+   [mickopedia.mickify :refer [mickify]]
+   [clojure.string :as s])
   (:gen-class))
+
+(def topic-schema
+  {(schema/required-key :topic) String})
 
 (def searcher
   (resource
@@ -13,7 +18,7 @@
     :methods {:get {:consumes [{:media-type #{"application/x-www-form-urlencoded"}
                                  :charset "UTF-8"}]
                     :produces #{"text/html"}
-                    :parameters {:query {:topic String}}
+                    :parameters {:query topic-schema}
                     :response (fn [ctx]
                                 (let [{:keys [topic]}
                                       (get-in ctx [:parameters :query])]
