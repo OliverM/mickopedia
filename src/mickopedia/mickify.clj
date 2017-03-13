@@ -6,14 +6,6 @@
 (def ^:dynamic *wikipedia-search-url*
   "http://en.wikipedia.org/wiki/Special:Search?go=Go&search=")
 
-(def fragment-transformers
-  "2 & 3 letter transformations."
-  [])
-
-(def word-transformers
-  "Entire word transformations."
-  [])
-
 (def phrases
   "Phrases that can be inserted to replace periods."
   [". Bejaysus. ",". Jasus. ",". Jaysis. ",". Jaykers! ",". Sufferin'
@@ -63,6 +55,8 @@
       (s/replace #"\bsl\B" "shl")
       (s/replace #"\Bing\b" "in'")
       (s/replace "Wikipedia" "Mickopedia")
+      (s/replace #"\bbroken\b" "banjaxed")
+      (s/replace #"\bpunch\b" "clatter")
       (s/replace " a " (random-collection-choice aReps " a "))
       (s/replace " the " (random-collection-choice theReps " the "))
       (s/replace "." (random-collection-choice phrases "."))))
