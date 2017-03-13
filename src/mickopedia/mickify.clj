@@ -57,8 +57,15 @@
       (s/replace "Wikipedia" "Mickopedia")
       (s/replace #"\bbroken\b" "banjaxed")
       (s/replace #"\bpunch\b" "clatter")
+      (s/replace #"\bMother\b" "Mammy")
       (s/replace #"\bmother\b" "mammy")
+      (s/replace #"\bmothers\b" "mammies")
       (s/replace #"\bhim\b" "yer man")
+      (s/replace #"\b[vV]agina\b" "gee")
+      (s/replace #"\bVagina\b" "Gee")
+      (s/replace #"\bpenis\b" "mickey")
+      (s/replace #"\bPenis\b" "Mickey")
+
       (s/replace " a " (random-collection-choice aReps " a "))
       (s/replace " the " (random-collection-choice theReps " the "))
       (s/replace "." (random-collection-choice phrases "."))))
@@ -80,7 +87,7 @@
   "The mickopedia transformations."
   (html/transformation
    [:head] (html/prepend (html/html [:base {:href "http://en.wikipedia.org"}]))
-   [:div html/text-node] mickify-text-node
+   [ #{:h1 :div} html/text-node] mickify-text-node
    [:a] mickify-alink-node
    [:form#searchform] (html/set-attr :action "http://mickopedia.org/mickify")
    [:div#simpleSearch :> :input] (html/remove-attr :name)
