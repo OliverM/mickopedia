@@ -1,4 +1,4 @@
-(defproject mickopedia "0.1.0-SNAPSHOT"
+(defproject mickopedia "0.2.0"
   :description "Mickopedia (in Clojure)"
   :url "http://mickopedia.org/"
   :license {:name "Eclipse Public License"
