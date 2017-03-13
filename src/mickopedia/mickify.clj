@@ -58,6 +58,7 @@
       (s/replace #"\bbroken\b" "banjaxed")
       (s/replace #"\bpunch\b" "clatter")
       (s/replace #"\bmother\b" "mammy")
+      (s/replace #"\bhim\b" "yer man")
       (s/replace " a " (random-collection-choice aReps " a "))
       (s/replace " the " (random-collection-choice theReps " the "))
       (s/replace "." (random-collection-choice phrases "."))))
