@@ -68,7 +68,7 @@
 
       (s/replace #" a " #(random-collection-choice aReps %))
       (s/replace #" the " #(random-collection-choice theReps %))
-      (s/replace #"\." #(random-collection-choice phrases %))))
+      (s/replace #"\. " #(random-collection-choice phrases %))))
 
 (defn mickify-alink-node
   "Given an enlive node of an <a> element with a href attribute pointing back to
